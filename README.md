@@ -50,3 +50,18 @@ Usage of bin/todo-app:
   -version
            Shows the version
 ```
+
+
+## Authentification via JWT
+To enable the Authentification with [JWT](https://jwt.io/) add and adjust the following parameters to the `default.config`
+
+```javascript
+{
+    //...
+    "SecurityConfig": {
+        "EnableJWTAuthentification": true,
+        "JWTSharedKey": "my-shared-secrete"
+
+    }
+}
+```

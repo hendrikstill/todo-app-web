@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/johscheuer/todo-app-web/tododb"
-	"github.com/mcuadros/go-gin-prometheus"
+	ginprometheus "github.com/mcuadros/go-gin-prometheus"
 )
 
 var (
@@ -62,15 +62,20 @@ func main() {
 		}()
 	}
 
-	router := gin.Default()
+	router := gin.New()
 
 	p.Use(router)
-	router.GET("/read/todo", readTodoHandler)
-	router.GET("/insert/todo/:value", insertTodoHandler)
-	router.GET("/delete/todo/:value", deleteTodoHandler)
+
 	router.GET("/health", healthCheckHandler)
 	router.GET("/whoami", whoAmIHandler)
 	router.GET("/version", versionHandler)
+
+	authorized := router.Group("/", JwtAuthRequired(config.SecurityConfig))
+	{
+		authorized.GET("/read/todo", readTodoHandler)
+		authorized.GET("/insert/todo/:value", insertTodoHandler)
+		authorized.GET("/delete/todo/:value", deleteTodoHandler)
+	}
 
 	router.Use(static.Serve("/", static.LocalFile("./public", true)))
 	router.Run(":3000")
